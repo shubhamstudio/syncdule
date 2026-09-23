@@ -17,7 +17,7 @@ import { Hero } from "@/components/landing/hero";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { SiteHeader } from "@/components/landing/site-header";
 
-function LandingPageContent() {
+function LandingAuthRedirect() {
   const { isLoaded, isSignedIn } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -32,8 +32,16 @@ function LandingPageContent() {
     router.replace(isSignedIn ? "/calendar" : `/${authMode}`);
   }, [authMode, isLoaded, isSignedIn, router]);
 
+  return null;
+}
+
+export default function LandingPage() {
+  const { isSignedIn } = useAuth();
   return (
     <div className="landing-neo">
+      <Suspense fallback={null}>
+        <LandingAuthRedirect />
+      </Suspense>
       <SiteHeader isSignedIn={isSignedIn} />
       <main>
         <Hero isSignedIn={isSignedIn} />
@@ -45,13 +53,5 @@ function LandingPageContent() {
       </main>
       <SiteFooter />
     </div>
-  );
-}
-
-export default function LandingPage() {
-  return (
-    <Suspense fallback={null}>
-      <LandingPageContent />
-    </Suspense>
   );
 }
