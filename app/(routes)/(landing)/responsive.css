@@ -1,0 +1,397 @@
+/* ── Landing responsive layer ─────────────────────────────────────────
+   PASTE THIS AT THE VERY END OF globals.css.
+   It replaces the two trailing landing blocks:
+     @media (min-width: 40rem) { .landing-neo { --landing-page-padding ... } }
+     @media (min-width: 64rem) { .landing-header { ... } }
+   (Keep the final prefers-reduced-motion block.)
+
+   Rules:
+   - Base = mobile. Only min-width queries, ascending.
+   - Uses the real tokens: --landing-page-padding, --landing-section-space,
+     --landing-container (NOT --pad / --max).
+   - Each breakpoint changes only what differs.
+   Breakpoints: 40rem (640) · 48rem (768) · 64rem (1024) · 80rem (1280) · 90rem (1440)
+   ─────────────────────────────────────────────────────────────────── */
+
+/* ── Base: mobile (< 40rem) ───────────────────────────────────────── */
+.landing-neo {
+  --landing-page-padding: 1rem;
+  --landing-section-space: 4rem;
+  min-height: 100vh;
+  min-height: 100svh; /* mobile browser bars don't cut the hero */
+}
+
+/* Header */
+.landing-header { padding-block: 0.75rem; }
+.landing-header-scrolled { padding-block: 0.5rem; }
+.landing-header-inner { gap: 0.75rem; }
+.landing-logo { min-width: 0; }
+.landing-header-actions { flex-shrink: 0; gap: 0.5rem; }
+.landing-header .landing-button { min-height: 2.5rem; padding-inline: 0.875rem; }
+.landing-mobile-menu {
+  max-height: calc(100svh - 5rem);
+  overflow-y: auto;
+}
+
+/* Hero: single column, preview stacks under the copy */
+.landing-hero {
+  min-height: auto;
+  padding-block: 6.5rem 3.5rem;
+}
+.landing-hero-glow {
+  width: 26rem;
+  height: 26rem;
+  inset: -8% -45% auto auto;
+}
+.landing-hero-grid {
+  grid-template-columns: minmax(0, 1fr); /* explicit: never depends on content */
+  gap: 2.5rem;
+  min-height: 0;
+}
+.landing-hero-grid > * { min-width: 0; }
+.landing-hero h1 {
+  margin-top: 1.25rem;
+  font-size: clamp(2.5rem, 1.25rem + 8vw, 3.5rem);
+  line-height: 1;
+  overflow-wrap: break-word;
+}
+.landing-hero-description { margin-top: 1.25rem; font-size: 0.9375rem; }
+.landing-actions { margin-top: 1.5rem; }
+.landing-actions .landing-button { flex: 1 1 10rem; }
+
+/* Mono labels wrap instead of overflowing on narrow screens */
+.landing-eyebrow,
+.landing-kicker,
+.landing-hero-proof { flex-wrap: wrap; }
+
+.landing-preview { width: 100%; max-width: 26rem; margin-inline: auto; }
+.landing-preview-main { padding: 1rem; }
+.landing-preview-week { gap: 0.25rem; }
+
+/* Sections */
+.landing-workflow-grid,
+.landing-feature-grid,
+.landing-channel-cards { margin-top: 2rem; }
+.landing-workflow-grid article { min-height: 0; }
+.landing-workflow-grid h3 { margin-top: 2.5rem; }
+.landing-feature-grid h3 { margin-top: 2rem; }
+.landing-channel-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.landing-faq-layout { gap: 2rem; }
+.landing-closing h2 { font-size: clamp(2.25rem, 1.5rem + 4vw, 4rem); }
+
+/* Footer */
+.landing-footer nav { flex-wrap: wrap; justify-content: center; }
+
+/* ── Large phones / small tablets (>= 40rem) ──────────────────────── */
+@media (min-width: 40rem) {
+  .landing-neo {
+    --landing-page-padding: 1.5rem;
+    --landing-section-space: 5rem;
+  }
+
+  .landing-hero { padding-block: 8rem 4.5rem; }
+  .landing-hero h1 { font-size: clamp(3.5rem, 2rem + 4vw, 4.25rem); }
+  .landing-hero-description { font-size: 1rem; }
+  .landing-actions { margin-top: 2rem; }
+  .landing-actions .landing-button { flex: 0 0 auto; }
+  .landing-preview-main { padding: 1.25rem; }
+  .landing-preview-week { gap: 0.375rem; }
+
+  .landing-feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── Tablet (>= 48rem) ────────────────────────────────────────────── */
+@media (min-width: 48rem) {
+  .landing-neo {
+    --landing-page-padding: 2rem;
+    --landing-section-space: 6rem;
+  }
+
+  .landing-hero { padding-block: 8.5rem 5rem; }
+  .landing-preview { max-width: 28rem; margin-inline: 0; }
+
+  .landing-workflow-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .landing-channel-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+  .landing-footer > div {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+/* ── Laptop (>= 64rem): two-column hero, desktop nav ──────────────── */
+@media (min-width: 64rem) {
+  .landing-neo { --landing-section-space: 7rem; }
+
+  .landing-header { padding-block: 1.25rem; }
+  .landing-header-scrolled { padding-block: 0.75rem; }
+  .landing-nav,
+  .landing-header-desktop { display: flex; }
+  .landing-menu-toggle { display: none; }
+  .landing-mobile-menu,
+  .landing-mobile-menu.is-open { display: none; } /* never linger after a resize */
+  .landing-header-actions { gap: 0.75rem; }
+
+  .landing-hero {
+    min-height: min(44rem, 100svh);
+    padding-block: 7.5rem 4rem;
+  }
+  .landing-hero-glow { width: 42rem; height: 42rem; inset: -25% -15% auto auto; }
+
+  /* Right column flexes between 20 and 24rem so 1024px screens never squeeze
+     the headline; gap scales with the viewport. */
+  .landing-hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 24rem);
+    gap: clamp(2.5rem, 4vw, 5rem);
+    min-height: 0;
+  }
+  /* 4.25rem = where the tablet size tops out, so no size dip at 1024px */
+  .landing-hero h1 { font-size: clamp(4.25rem, 4.5vw, 4.75rem); }
+  .landing-preview { width: 100%; max-width: 24rem; justify-self: end; }
+
+  .landing-section-heading h2 { font-size: 3.25rem; }
+  .landing-feature-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .landing-faq-layout {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(3rem, 6vw, 6rem);
+  }
+}
+
+/* ── Desktop (>= 80rem) ───────────────────────────────────────────── */
+@media (min-width: 80rem) {
+  .landing-neo {
+    --landing-page-padding: 2.5rem;
+    --landing-section-space: 8rem;
+  }
+  .landing-hero { padding-block: 8rem 5rem; }
+}
+
+/* ── Large desktop / 24-inch (>= 90rem) ───────────────────────────── */
+@media (min-width: 90rem) {
+  .landing-neo { --landing-container: 76rem; }
+  .landing-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(22rem, 26rem); }
+  .landing-preview { max-width: 26rem; }
+  .landing-hero h1 { max-width: 11ch; }
+}
+
+/* ── First-viewport density ──────────────────────────────────────────
+   Keep the complete hero (actions and both preview cards) inside a typical
+   15-inch laptop at 100% browser zoom. The content is aligned from the top
+   because centre-aligning a short copy column against a taller preview makes
+   the visible gap in the hero. */
+@media (min-width: 64rem) and (max-width: 89.9375rem) {
+  .landing-hero {
+    min-height: min(39rem, 100svh);
+    padding-block: 5rem 2rem;
+  }
+
+  .landing-hero-grid {
+    align-items: start;
+  }
+
+  .landing-hero-copy {
+    padding-top: 2.25rem;
+  }
+
+  .landing-hero h1 {
+    font-size: clamp(3.5rem, 4.75vw, 4.1rem);
+  }
+
+  .landing-preview {
+    max-width: 20rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .landing-preview-main {
+    padding: 1rem;
+  }
+
+  .landing-preview-week {
+    gap: 0.25rem;
+    margin-top: 0.875rem;
+  }
+
+  .landing-preview-week > div {
+    padding-block: 0.375rem;
+  }
+
+  .landing-preview-posts {
+    gap: 0.375rem;
+    margin-top: 0.75rem;
+  }
+
+  .landing-preview-posts > div {
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .landing-channel-mark {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .landing-preview-stats {
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .landing-preview-stats > div {
+    padding: 0.75rem;
+  }
+
+  .landing-preview-stats p,
+  .landing-chart,
+  .landing-channel-grid {
+    margin-top: 0.75rem;
+  }
+
+  .landing-chart {
+    height: 1.25rem;
+  }
+
+  .landing-channel-grid {
+    gap: 0.25rem;
+  }
+}
+
+@media (min-width: 90rem) {
+  .landing-hero {
+    min-height: min(41rem, 100svh);
+    padding-block: 5.5rem 2.5rem;
+  }
+
+  .landing-hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 22rem);
+    align-items: start;
+  }
+
+  .landing-hero-copy {
+    padding-top: 2.25rem;
+  }
+
+  .landing-hero h1 {
+    max-width: 10.5ch;
+    font-size: 4.25rem;
+  }
+
+  .landing-preview {
+    max-width: 22rem;
+  }
+}
+
+/* A desktop hero is a complete first-screen composition. Keeping its minimum
+   block size equal to the viewport prevents the next dark section from
+   appearing below the cards on 24-inch displays. */
+@media (min-width: 64rem) {
+  .landing-hero {
+    min-height: 100svh;
+  }
+}
+
+@media (min-width: 90rem) {
+  .landing-neo {
+    --landing-container: 84rem;
+    --max: 84rem;
+  }
+
+  .landing-hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(21rem, 24rem);
+    gap: clamp(4rem, 7vw, 7rem);
+  }
+}
+
+/* Chromium puts the document scrollbar on either html or body depending on
+   platform. Hide the rail in both places without disabling wheel, touch, or
+   keyboard scrolling. */
+html:has(.landing-neo),
+body:has(.landing-neo),
+.landing-neo {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html:has(.landing-neo)::-webkit-scrollbar,
+body:has(.landing-neo)::-webkit-scrollbar,
+.landing-neo::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* 15-inch laptops have enough horizontal room for two columns, but not for
+   the tall preview used on large monitors. Keep every preview card visible in
+   the first viewport by reducing the complete visual system together. */
+@media (min-width: 64rem) and (max-width: 89.9375rem) {
+  .landing-preview {
+    max-width: 18rem;
+  }
+
+  .landing-preview-main {
+    padding: 0.75rem;
+  }
+
+  .landing-preview-heading strong {
+    font-size: 0.9375rem;
+  }
+
+  .landing-preview-week {
+    gap: 0.1875rem;
+    margin-top: 0.625rem;
+  }
+
+  .landing-preview-week > div {
+    padding-block: 0.25rem;
+  }
+
+  .landing-preview-posts {
+    gap: 0.3125rem;
+    margin-top: 0.625rem;
+  }
+
+  .landing-preview-posts > div {
+    gap: 0.375rem;
+    padding: 0.375rem;
+  }
+
+  .landing-preview-posts b {
+    font-size: 0.6875rem;
+  }
+
+  .landing-preview-posts small {
+    font-size: 0.5625rem;
+  }
+
+  .landing-channel-mark {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .landing-preview-stats {
+    gap: 0.375rem;
+    margin-top: 0.375rem;
+  }
+
+  .landing-preview-stats > div {
+    padding: 0.625rem;
+  }
+
+  .landing-preview-stats p,
+  .landing-chart,
+  .landing-channel-grid {
+    margin-top: 0.5rem;
+  }
+
+  .landing-preview-stats strong {
+    font-size: 1.25rem;
+  }
+
+  .landing-chart {
+    height: 1rem;
+  }
+
+  .landing-channel-grid {
+    gap: 0.1875rem;
+  }
+}

@@ -1,0 +1,32 @@
+.landing-header {
+  height: 4rem;
+  padding-block: 0;
+}
+
+.landing-header-scrolled {
+  height: 4rem;
+  padding-block: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(9, 9, 11, 0.88) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+  backdrop-filter: blur(16px) saturate(120%) !important;
+}
+
+.landing-header-inner {
+  height: 100%;
+}
+
+.landing-header .landing-actions {
+  margin-top: 0;
+}
+
+.landing-header .landing-button {
+  min-height: 2.625rem;
+  padding-inline: 1.125rem;
+  white-space: nowrap;
+}
+
+@media (min-width: 64rem) {
+  .landing-header { height: 4.5rem; }
+  .landing-header-scrolled { height: 4.5rem; }
+}

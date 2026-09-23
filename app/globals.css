@@ -1,0 +1,815 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ──────────────────────────────────────────────
+   SYNCDULE × Kielo Design Tokens
+   Single source of truth. Dark-first. No light mode.
+
+   NOTE: all landing breakpoint behavior lives in responsive.css.
+   Do not add landing @media rules here.
+   ────────────────────────────────────────────── */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ── Core Surface & Brand Tokens ──────────────── */
+:root,
+.dark {
+  /* Surface Tokens */
+  --canvas: #09090b;
+  --surface: #101012;
+  --surface-raised: #151518;
+  --surface-muted: #19191c;
+  --border-subtle: #29292d;
+  --border-interactive: #3f3f46;
+
+  /* Typography Tokens */
+  --text-strong: #f4f4f0;
+  --text-muted: #a6a6a8;
+
+  /* Brand accents (SYNCDULE identity) */
+  --brand-pink: #ff2d78;
+  --brand-red: #e5003c;
+  --brand-orange: #ff8a00;
+  --brand-yellow: #ffb200;
+  --brand-gradient: linear-gradient(135deg, var(--brand-pink), var(--brand-orange));
+  --brand-glow: rgba(255, 45, 120, 0.15);
+
+  /* Radius & Layout Controls */
+  --radius-control: 8px;
+  --radius-panel: 12px;
+
+  /* Motion Dynamics */
+  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-standard: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── Semantic Mapping ──────────────────────── */
+  --background: var(--canvas);
+  --foreground: var(--text-strong);
+  --card: var(--surface);
+  --card-foreground: var(--text-strong);
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--text-strong);
+  --primary: var(--brand-orange);
+  --primary-foreground: #160900;
+  --secondary: var(--surface-muted);
+  --secondary-foreground: var(--text-strong);
+  --muted: var(--surface-muted);
+  --muted-foreground: var(--text-muted);
+  --accent: #242428;
+  --accent-foreground: var(--text-strong);
+  --destructive: oklch(0.68 0.20 27);
+  --border: var(--border-subtle);
+  --input: #1b1b1f;
+  --ring: var(--brand-orange);
+
+  /* Chart Tokens */
+  --chart-1: var(--brand-orange);
+  --chart-2: var(--brand-pink);
+  --chart-3: var(--brand-yellow);
+  --chart-4: oklch(0.72 0.11 250);
+  --chart-5: oklch(0.68 0.10 20);
+
+  /* Sidebar Tokens */
+  --sidebar: #0b0b0d;
+  --sidebar-foreground: #deded9;
+  --sidebar-primary: var(--brand-orange);
+  --sidebar-primary-foreground: #160900;
+  --sidebar-accent: #17171a;
+  --sidebar-accent-foreground: var(--text-strong);
+  --sidebar-border: #242428;
+  --sidebar-ring: var(--brand-orange);
+
+  --radius: 0.5rem;
+  color-scheme: dark;
+}
+
+/* ── Global Element Styles ────────────────────── */
+button[data-slot="button"] {
+  cursor: pointer;
+}
+
+[data-slot="sidebar-container"] {
+  border: none !important;
+}
+
+/* ── Workspace Shell Overrides ────────────────── */
+/* Kielo-inspired product language: precise surfaces, restrained radius, and a single warm signal. */
+.workspace-shell [data-slot="card"] {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.workspace-shell [data-slot="button"][data-variant="default"] {
+  background: var(--brand-orange);
+  color: #170a00;
+  box-shadow: none;
+}
+
+.workspace-shell [data-slot="button"][data-variant="outline"],
+.workspace-shell [data-slot="input"] {
+  border-color: rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.workspace-shell [data-slot="button"],
+.workspace-shell [data-slot="input"],
+.workspace-shell [data-slot="card"],
+.workspace-shell [data-slot="popover-content"] {
+  border-radius: var(--radius-control);
+}
+
+.workspace-shell [data-slot="card-footer"] {
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.workspace-shell [data-slot="badge"] {
+  border-radius: 4px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.workspace-shell [data-slot="tabs-list"] {
+  border-radius: var(--radius-control);
+}
+
+.workspace-shell [data-slot="tabs-trigger"] {
+  border-radius: 6px;
+}
+
+.workspace-shell [data-slot="dialog-content"] {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.55);
+}
+
+.workspace-shell [data-slot="dialog-overlay"] {
+  background: rgba(0, 0, 0, 0.68);
+  backdrop-filter: blur(5px);
+}
+
+/* High-contrast focus-visible rings using brand-pink */
+.workspace-shell [data-slot="button"]:focus-visible,
+.workspace-shell [data-slot="input"]:focus-visible,
+.workspace-shell [data-slot="tabs-trigger"]:focus-visible,
+.workspace-shell [data-slot="select-trigger"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--canvas), 0 0 0 4px var(--brand-pink);
+}
+
+/* ── Workspace Canvas & Grid ──────────────────── */
+.workspace-canvas {
+  background: #070708;
+}
+
+.workspace-grid {
+  background-color: #070708;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    radial-gradient(circle at 86% -5%, rgba(255, 90, 0, 0.16), transparent 28rem);
+  background-size: 44px 44px, 44px 44px, auto;
+}
+
+.workspace-panel {
+  background: linear-gradient(145deg, rgba(18, 18, 20, 0.98), rgba(10, 10, 12, 0.99));
+}
+
+/* The dashboard is intentionally scrollbarless. `overflow` remains enabled,
+   so mouse wheel, trackpad, touch, keyboard, and programmatic scrolling work. */
+.workspace-shell,
+.workspace-shell *,
+.dashboard-page-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none !important;
+}
+
+.workspace-shell::-webkit-scrollbar,
+.workspace-shell *::-webkit-scrollbar,
+.dashboard-page-scroll::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+/* Keep the post composer scroll affordance visible without the bulky native rail. */
+.post-dialog-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #ff8a00 transparent;
+}
+
+.post-dialog-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.post-dialog-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.post-dialog-scrollbar::-webkit-scrollbar-thumb {
+  background: #ff8a00;
+  border-radius: 999px;
+}
+
+.post-dialog-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ff9d28;
+}
+
+
+/* ── Landing Page Styles ──────────────────────── */
+.landing-neo {
+  --background: #09090b;
+  --foreground: #f4f4f0;
+  --card: #111114;
+  --card-foreground: #f4f4f0;
+  --popover: #111114;
+  --popover-foreground: #f4f4f0;
+  --primary: #ff8a00;
+  --primary-foreground: #160900;
+  --secondary: #19191c;
+  --secondary-foreground: #efefeb;
+  --muted: #19191c;
+  --muted-foreground: #a6a6a8;
+  --accent: #242428;
+  --accent-foreground: #f4f4f0;
+  --border: #29292d;
+  --input: #1b1b1f;
+  --ring: #ff8a00;
+  color-scheme: dark;
+}
+
+/* NOTE: the earlier multi-radial `.landing-hero` background was removed; it was
+   fully overridden by the `.landing-hero` rule in the Kielo landing system below. */
+
+.landing-noise {
+  opacity: 0.15;
+  background-image:
+    linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.18) 48%, transparent 100%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.14) 0 1px, transparent 1px 3px);
+  mix-blend-mode: soft-light;
+}
+
+.landing-nav-glass {
+  background: linear-gradient(90deg, rgba(13, 8, 14, 0.82), rgba(26, 12, 9, 0.78));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(20px) saturate(145%);
+}
+
+.landing-headline {
+  letter-spacing: -0.075em;
+}
+
+.landing-italic {
+  font-family: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  font-style: italic;
+  letter-spacing: -0.075em;
+  text-shadow: 0 2px 24px rgba(255,255,255,0.18);
+}
+
+.landing-campaign,
+.landing-mini-card {
+  background: rgba(8, 8, 10, 0.82);
+  backdrop-filter: blur(24px);
+}
+
+.landing-campaign {
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.landing-flow {
+  background: radial-gradient(circle at 12% 20%, rgba(247, 57, 118, 0.12), transparent 26rem), var(--background);
+}
+
+.landing-section {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(255, 100, 50, 0.07), transparent 26rem),
+    radial-gradient(circle at 8% 70%, rgba(255, 28, 126, 0.08), transparent 30rem),
+    var(--background);
+}
+
+.landing-flow-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #101012;
+  box-shadow: none;
+}
+
+#features .group,
+#channels .group {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: #101012;
+  box-shadow: none;
+}
+
+#features .group:hover,
+#channels .group:hover {
+  border-color: rgba(255, 183, 97, 0.68);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.landing-faq {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: #101012;
+  box-shadow: none;
+}
+
+.landing-faq > * + * {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.landing-cta {
+  border-color: rgba(255, 192, 216, 0.28);
+  background:
+    radial-gradient(circle at 16% 50%, rgba(255, 45, 128, 0.35), transparent 27rem),
+    radial-gradient(circle at 85% 30%, rgba(255, 156, 41, 0.3), transparent 24rem),
+    linear-gradient(120deg, #4d0d28, #30141d 52%, #522207);
+  box-shadow: none;
+}
+
+/* Legacy `.landing-campaign` / `.landing-mini-card` layout tweaks. Kept only in
+   case those classes are still used somewhere; delete this block (and the two
+   rules above) if a project-wide search finds no usage. */
+@media (min-width: 1024px) {
+  .landing-hero .landing-campaign {
+    padding: 0.75rem;
+    border-radius: 22px;
+  }
+
+  .landing-campaign .mt-7 {
+    margin-top: 1rem;
+  }
+
+  .landing-campaign .grid.grid-cols-7 {
+    gap: 0.25rem;
+  }
+
+  .landing-campaign .grid.grid-cols-7 > div {
+    padding-block: 0.5rem;
+    border-radius: 0.65rem;
+  }
+
+  .landing-campaign .text-lg {
+    font-size: 1rem;
+  }
+
+  .landing-campaign .space-y-3 {
+    margin-top: 0.75rem;
+  }
+
+  .landing-campaign .space-y-3 > * + * {
+    margin-top: 0.5rem;
+  }
+
+  .landing-campaign .space-y-3 > div {
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+  }
+
+  .landing-campaign .size-9 {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .landing-campaign .space-y-3 .text-sm {
+    font-size: 0.75rem;
+  }
+
+  .landing-campaign .space-y-3 .text-xs {
+    font-size: 0.625rem;
+  }
+
+  .landing-hero .landing-mini-card {
+    padding: 0.75rem;
+    border-radius: 18px;
+  }
+
+  .landing-hero .landing-mini-card .mt-8,
+  .landing-hero .landing-mini-card .mt-7,
+  .landing-hero .landing-mini-card .mt-6 {
+    margin-top: 0.75rem;
+  }
+
+  .landing-hero .landing-mini-card .text-4xl {
+    font-size: 1.75rem;
+  }
+
+  .landing-hero .landing-mini-card .h-8 {
+    height: 1.25rem;
+  }
+
+  .landing-hero .landing-mini-card .grid.grid-cols-2 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .landing-hero .landing-mini-card .grid.grid-cols-2 > div {
+    border-radius: 0.55rem;
+  }
+}
+
+.landing-mini-card {
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: none;
+}
+
+/* ── Auth Shell Styles ────────────────────────── */
+.auth-shell {
+  background: #111111;
+}
+
+.auth-clerk-card {
+  width: 100%;
+  border: 0;
+  border-radius: 1rem 1rem 0 0;
+  background: #111111;
+  box-shadow: none;
+  padding: 0.75rem 1rem !important;
+}
+
+.auth-clerk-root {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.auth-clerk-box {
+  width: 100%;
+  max-width: none;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 1rem;
+  background: #111111;
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.5);
+}
+
+.auth-clerk-footer {
+  margin-top: -1px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0 0 1rem 1rem;
+  background: #111111;
+}
+
+/* The auth flow stays on the landing page, so browser zoom cannot leave a
+   narrow, detached card floating in an empty screen. */
+.auth-home-dialog {
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex;
+  flex-direction: column;
+  width: 100vw !important;
+  height: 100dvh;
+  max-width: none !important;
+  align-items: center;
+  justify-content: safe center;
+  padding: 1rem;
+  border: 0;
+  border-radius: 0;
+  z-index: 51;
+  background: transparent;
+  box-shadow: none;
+  transform: none !important;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  pointer-events: auto;
+  will-change: opacity, transform;
+}
+
+.auth-home-dialog::-webkit-scrollbar {
+  display: none;
+}
+
+.auth-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(9, 9, 11, 0.48);
+}
+
+/* Blur the page itself instead of the portal. A backdrop-filter can blur the
+   Clerk card when browser compositing creates a shared stacking layer. */
+.landing-neo {
+  transition: filter 180ms ease;
+}
+
+body:has(.auth-home-dialog) .landing-neo {
+  filter: blur(6px);
+}
+
+.auth-home-dialog[data-state="open"] {
+  animation: auth-dialog-fade-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.auth-home-dialog[data-state="closed"] {
+  animation: auth-dialog-fade-out 180ms ease-in both;
+}
+
+@keyframes auth-dialog-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes auth-dialog-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* The overlay scrolls only when a short viewport needs it. The card itself
+   never acquires a nested scrollbar or changes its readable type size. */
+.auth-card-frame {
+  position: relative;
+  width: min(28rem, calc(100vw - 2rem));
+  margin: 0;
+  flex: none;
+  pointer-events: auto;
+  will-change: opacity;
+}
+
+.auth-home-dialog[data-state="open"] .auth-card-frame {
+  animation: auth-card-enter 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.auth-home-dialog[data-state="closed"] .auth-card-frame {
+  animation: auth-card-exit 180ms ease-in both;
+}
+
+@keyframes auth-card-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes auth-card-exit {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.auth-dialog-close {
+  position: absolute;
+  z-index: 10;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 999px;
+  color: #d4d4d8;
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.auth-dialog-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.auth-dialog-close:focus-visible {
+  outline: 2px solid var(--brand-orange);
+  outline-offset: 2px;
+}
+
+@media (max-width: 40rem) {
+  .auth-home-dialog {
+    padding: 0.75rem;
+  }
+
+  .auth-card-frame {
+    width: min(28rem, calc(100vw - 1.5rem));
+  }
+}
+
+@media (min-width: 80rem) {
+  .auth-card-frame {
+    width: 28rem;
+  }
+}
+
+@media (max-height: 44rem) {
+  .auth-card-frame {
+    margin-block: 0.75rem;
+  }
+}
+
+.auth-loading-bar {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--brand-orange);
+  animation: auth-loading-pulse 900ms var(--transition-standard) infinite alternate;
+}
+
+.auth-loading-bar:nth-child(2) { animation-delay: 150ms; }
+.auth-loading-bar:nth-child(3) { animation-delay: 300ms; }
+
+@keyframes auth-loading-pulse {
+  from { opacity: 0.28; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(-0.25rem); }
+}
+
+/* ── Status Pulse Animation ───────────────────── */
+.status-pulse {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 14%, transparent), 0 0 12px color-mix(in srgb, var(--primary) 55%, transparent);
+}
+
+/* ── Reduced Motion ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  body:has(.auth-home-dialog) .landing-neo {
+    filter: none;
+  }
+}
+
+/* ── Base Layer ───────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* ── Kielo-inspired landing system ──────────────
+   Base (mobile) presentation values for the landing page. Breakpoint behavior
+   (tokens like --landing-page-padding, grid columns, nav visibility, type
+   scale) is defined in responsive.css. */
+.landing-neo {
+  --landing-canvas: #09090b;
+  --landing-surface: #0d0d10;
+  --landing-surface-raised: #141417;
+  --landing-ink: #fafafa;
+  --landing-ink-muted: #a1a1aa;
+  --landing-ink-subtle: #6b6b76;
+  --landing-hairline: rgba(255, 255, 255, 0.08);
+  --landing-hairline-strong: rgba(255, 255, 255, 0.16);
+  --landing-orange: #ff8a00;
+  --landing-red: #ff4b1f;
+  --landing-blue: #7dd3fc;
+  --landing-lime: #a3e635;
+  --landing-linkedin: #2867b2;
+  --landing-instagram: #e4405f;
+  --landing-facebook: #1877f2;
+  --landing-youtube: #ff0000;
+  --landing-container: 72rem;
+  --landing-page-padding: 1.25rem;
+  --landing-section-space: 5rem;
+  --landing-radius-sm: 0.375rem;
+  --landing-radius: 0.625rem;
+  --landing-radius-lg: 0.875rem;
+  --landing-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --landing-transition-fast: 150ms var(--landing-ease);
+  --landing-transition: 240ms var(--landing-ease);
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow-x: clip;
+  background: var(--landing-canvas);
+  color: var(--landing-ink);
+  font-family: var(--font-geist-sans), Geist, ui-sans-serif, system-ui, sans-serif;
+}
+
+.landing-neo * { border-color: var(--landing-hairline); }
+.landing-neo :focus-visible { outline: 2px solid var(--landing-blue); outline-offset: 3px; }
+.landing-container { width: min(100% - (var(--landing-page-padding) * 2), var(--landing-container)); margin-inline: auto; }
+.landing-header { position: fixed; inset: 0 0 auto; z-index: 40; padding-block: 1rem; transition: background var(--landing-transition), border-color var(--landing-transition), padding var(--landing-transition); }
+.landing-header-scrolled { padding-block: 0.625rem; border-bottom: 1px solid var(--landing-hairline); background: color-mix(in srgb, var(--landing-canvas) 86%, transparent); backdrop-filter: blur(16px); }
+.landing-header-inner, .landing-header-actions, .landing-actions { display: flex; align-items: center; }
+.landing-header-inner { justify-content: space-between; gap: 1.25rem; }
+.landing-logo { color: var(--landing-ink); }
+.landing-logo > div { border-color: var(--landing-hairline-strong); background: var(--landing-ink); color: var(--landing-canvas); border-radius: var(--landing-radius-sm); }
+.landing-nav { display: none; align-items: center; gap: 2rem; }
+.landing-nav a, .landing-footer a { color: var(--landing-ink-muted); font-size: 0.8125rem; transition: color var(--landing-transition-fast); }
+.landing-nav a:hover, .landing-footer a:hover { color: var(--landing-ink); }
+.landing-header-actions { gap: 0.75rem; }
+.landing-header-desktop { display: none; }
+.landing-menu-toggle { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid var(--landing-hairline); border-radius: var(--landing-radius-sm); color: var(--landing-ink); transition: background var(--landing-transition-fast); }
+.landing-menu-toggle:hover { background: var(--landing-surface-raised); }
+.landing-menu-toggle svg { width: 1rem; height: 1rem; }
+.landing-mobile-menu { display: none; width: min(100% - (var(--landing-page-padding) * 2), var(--landing-container)); margin: 0.75rem auto 0; padding: 0.5rem; border: 1px solid var(--landing-hairline); border-radius: var(--landing-radius); background: var(--landing-surface); }
+.landing-mobile-menu.is-open { display: grid; }
+.landing-mobile-menu a { padding: 0.75rem; color: var(--landing-ink-muted); font-size: 0.875rem; border-radius: var(--landing-radius-sm); }
+.landing-mobile-menu a:hover { background: var(--landing-surface-raised); color: var(--landing-ink); }
+
+.landing-hero { position: relative; isolation: isolate; overflow: hidden; min-height: 44rem; padding-block: 8.5rem 4rem; background: linear-gradient(130deg, #210f08 0%, #120d0b 42%, var(--landing-canvas) 84%); }
+.landing-hero-glow { position: absolute; z-index: -1; inset: -25% -15% auto auto; width: 42rem; height: 42rem; border-radius: 999px; background: radial-gradient(circle, color-mix(in srgb, var(--landing-orange) 46%, transparent), transparent 66%); filter: blur(18px); opacity: 0.8; }
+.landing-hero::after { position: absolute; inset: 0; z-index: -1; content: ""; pointer-events: none; opacity: 0.045; background-image: repeating-linear-gradient(90deg, #fff 0 1px, transparent 1px 4px); }
+.landing-hero-grid { display: grid; align-items: center; gap: 3.5rem; }
+.landing-hero-copy { max-width: 39rem; }
+.landing-eyebrow, .landing-kicker, .landing-hero-proof, .landing-preview-heading p, .landing-preview-stats p, .landing-workflow-grid article > span { display: flex; align-items: center; gap: 0.5rem; color: var(--landing-ink-muted); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 0.625rem; font-weight: 500; letter-spacing: 0.13em; line-height: 1.3; text-transform: uppercase; }
+.landing-eyebrow { color: var(--landing-ink); }
+.landing-eyebrow span { width: 0.375rem; height: 0.375rem; border-radius: 999px; background: var(--landing-orange); box-shadow: 0 0 0.75rem var(--landing-orange); }
+.landing-hero h1, .landing-section-heading h2, .landing-closing h2 { margin: 1.5rem 0 0; color: var(--landing-ink); font-size: clamp(2.875rem, 7vw, 5.25rem); font-weight: 600; letter-spacing: -0.052em; line-height: 0.98; }
+.landing-hero h1 em, .landing-section-heading h2 em { color: var(--landing-orange); font-style: normal; }
+.landing-hero-description { max-width: 34rem; margin-top: 1.5rem; color: color-mix(in srgb, var(--landing-ink) 80%, transparent); font-size: 1rem; line-height: 1.65; }
+.landing-actions { flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+.landing-button { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center; gap: 0.5rem; padding-inline: 1rem; border: 1px solid var(--landing-hairline); border-radius: var(--landing-radius-sm); font-size: 0.8125rem; font-weight: 500; transition: transform var(--landing-transition-fast), border-color var(--landing-transition-fast), background var(--landing-transition-fast); }
+.landing-button:hover { transform: translateY(-1px); }
+.landing-button-primary { border-color: var(--landing-orange); background: var(--landing-orange); color: #1a0d00; }
+.landing-button-primary:hover { background: color-mix(in srgb, var(--landing-orange) 88%, white); }
+.landing-button-secondary { color: var(--landing-ink); background: color-mix(in srgb, var(--landing-canvas) 56%, transparent); }
+.landing-button-secondary:hover { border-color: var(--landing-hairline-strong); background: var(--landing-surface-raised); }
+.landing-hero-proof { margin-top: 1.75rem; color: var(--landing-ink-subtle); }
+.landing-preview { width: min(100%, 24rem); margin-inline: auto; }
+.landing-preview-main, .landing-preview-stats > div { border: 1px solid var(--landing-hairline); border-radius: var(--landing-radius); background: color-mix(in srgb, var(--landing-surface) 86%, transparent); box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.24); backdrop-filter: blur(14px); }
+.landing-preview-main { padding: 1.25rem; }
+.landing-preview-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.landing-preview-heading p { color: var(--landing-ink-subtle); font-size: 0.5625rem; }
+.landing-preview-heading strong { display: block; margin-top: 0.25rem; font-size: 1rem; font-weight: 500; }
+.landing-preview-heading > span { padding: 0.25rem 0.5rem; border: 1px solid color-mix(in srgb, var(--landing-lime) 28%, transparent); border-radius: 999px; color: var(--landing-lime); font-family: var(--font-geist-mono), monospace; font-size: 0.5625rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.landing-preview-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.375rem; margin-top: 1.25rem; }
+.landing-preview-week > div { padding-block: 0.5rem; border-radius: var(--landing-radius-sm); background: var(--landing-surface-raised); color: var(--landing-ink-muted); text-align: center; }
+.landing-preview-week .is-active { background: var(--landing-ink); color: var(--landing-canvas); }
+.landing-preview-week small { display: block; font-family: var(--font-geist-mono), monospace; font-size: 0.5rem; }
+.landing-preview-week b { display: block; margin-top: 0.25rem; font-size: 0.75rem; font-weight: 500; }
+.landing-preview-posts { display: grid; gap: 0.5rem; margin-top: 1rem; }
+.landing-preview-posts > div { display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem; border: 1px solid var(--landing-hairline); border-radius: var(--landing-radius-sm); background: color-mix(in srgb, var(--landing-ink) 4%, transparent); }
+.landing-preview-posts p { min-width: 0; flex: 1; }
+.landing-preview-posts b, .landing-preview-posts small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.landing-preview-posts b { font-size: 0.75rem; font-weight: 500; }
+.landing-preview-posts small { margin-top: 0.125rem; color: var(--landing-ink-subtle); font-size: 0.625rem; }
+.landing-preview-posts svg { width: 1rem; color: var(--landing-lime); }
+.landing-preview-posts i { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: var(--landing-orange); }
+.landing-channel-mark { display: grid; width: 2rem; height: 2rem; flex: none; place-items: center; border-radius: var(--landing-radius-sm); color: white; font-size: 0.75rem; font-weight: 700; }
+.linkedin { background: var(--landing-linkedin); }.instagram { background: var(--landing-instagram); }.facebook { background: var(--landing-facebook); }.youtube { background: var(--landing-youtube); }
+.landing-preview-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.75rem; }
+.landing-preview-stats > div { min-width: 0; padding: 1rem; }
+.landing-preview-stats svg { width: 1rem; height: 1rem; color: var(--landing-orange); }
+.landing-preview-stats p { margin-top: 1rem; color: var(--landing-ink-subtle); font-size: 0.5rem; }
+.landing-preview-stats strong { display: block; margin-top: 0.25rem; font-size: 1.5rem; font-weight: 500; letter-spacing: -0.05em; }.landing-preview-stats strong small { color: var(--landing-ink-muted); font-size: 0.625rem; font-weight: 400; letter-spacing: normal; }
+.landing-chart { display: flex; height: 1.75rem; align-items: end; gap: 0.125rem; margin-top: 1rem; }.landing-chart i { flex: 1; border-radius: 1px; background: var(--landing-orange); opacity: 0.75; }
+.landing-channel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.375rem; margin-top: 1rem; }.landing-channel-grid > span { display: grid; aspect-ratio: 1; place-items: center; border: 1px solid var(--landing-hairline); border-radius: var(--landing-radius-sm); background: var(--landing-surface-raised); }.landing-channel-grid svg { width: 1rem; height: 1rem; color: var(--landing-ink); }
+
+.landing-section { border-top: 1px solid var(--landing-hairline); padding-block: var(--landing-section-space); }.landing-workflow, .landing-channels { background: var(--landing-surface); }.landing-section-heading { max-width: 38rem; }.landing-section-heading.centered { margin-inline: auto; text-align: center; }.landing-section-heading.centered .landing-kicker { justify-content: center; }.landing-kicker { color: var(--landing-orange); }.landing-kicker svg { width: 0.75rem; height: 0.75rem; }.landing-section-heading h2, .landing-closing h2 { font-size: clamp(2rem, 4vw, 3.25rem); font-weight: 500; line-height: 1.08; }.landing-section-heading > p:not(.landing-kicker), .landing-closing > p:not(.landing-kicker) { margin-top: 1rem; color: var(--landing-ink-muted); font-size: 0.9375rem; line-height: 1.65; }
+.landing-workflow-grid { display: grid; gap: 0.75rem; margin-top: 2.5rem; }.landing-workflow-grid article, .landing-feature-grid article, .landing-channel-cards article { border: 1px solid var(--landing-hairline); border-radius: var(--landing-radius); background: var(--landing-canvas); }.landing-workflow-grid article { min-height: 13rem; padding: 1.25rem; }.landing-workflow-grid article > span { color: var(--landing-orange); }.landing-workflow-grid h3 { margin-top: 4rem; font-size: 1.125rem; font-weight: 500; letter-spacing: -0.025em; }.landing-workflow-grid p, .landing-feature-grid p, .landing-channel-cards p { margin-top: 0.5rem; color: var(--landing-ink-muted); font-size: 0.8125rem; line-height: 1.6; }
+.landing-feature-grid { display: grid; gap: 0.75rem; margin-top: 2.5rem; }.landing-feature-grid article { padding: 1.25rem; transition: transform var(--landing-transition), border-color var(--landing-transition), background var(--landing-transition); }.landing-feature-grid article:hover, .landing-channel-cards article:hover { border-color: color-mix(in srgb, var(--landing-orange) 48%, var(--landing-hairline)); background: var(--landing-surface-raised); transform: translateY(-2px); }.landing-feature-grid svg { width: 1.25rem; height: 1.25rem; color: var(--landing-orange); }.landing-feature-grid h3 { margin-top: 2.5rem; font-size: 1rem; font-weight: 500; }
+.landing-channel-cards { display: grid; gap: 0.75rem; margin-top: 2.5rem; }.landing-channel-cards article { padding: 1.25rem; text-align: center; transition: transform var(--landing-transition), border-color var(--landing-transition), background var(--landing-transition); }.landing-channel-cards article > span { display: grid; width: 3rem; height: 3rem; margin-inline: auto; place-items: center; border-radius: var(--landing-radius); color: white; }.landing-channel-cards svg { width: 1.5rem; height: 1.5rem; }.landing-channel-cards h3 { margin-top: 1rem; font-size: 0.9375rem; font-weight: 500; }.landing-channel-cards p { margin-top: 0.25rem; font-size: 0.6875rem; }
+.landing-faq-layout { display: grid; gap: 2.5rem; }.landing-faq-icon { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid color-mix(in srgb, var(--landing-orange) 40%, transparent); border-radius: var(--landing-radius); color: var(--landing-orange); }.landing-faq-icon svg { width: 1.125rem; }.landing-faq-list { border-top: 1px solid var(--landing-hairline); }.landing-faq-list details { border-bottom: 1px solid var(--landing-hairline); }.landing-faq-list summary { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.75rem; padding-block: 1.125rem; cursor: pointer; color: var(--landing-ink); font-size: 0.875rem; font-weight: 500; list-style: none; }.landing-faq-list summary::-webkit-details-marker { display: none; }.landing-faq-list summary > span { color: var(--landing-orange); font-family: var(--font-geist-mono), monospace; font-size: 0.625rem; }.landing-faq-list summary b { color: var(--landing-ink-muted); font-size: 1.25rem; font-weight: 400; transition: transform var(--landing-transition); }.landing-faq-list details[open] summary b { transform: rotate(45deg); }.landing-faq-list details p { max-width: 40rem; padding-bottom: 1.125rem; color: var(--landing-ink-muted); font-size: 0.8125rem; line-height: 1.65; }
+.landing-closing-section { background: linear-gradient(135deg, color-mix(in srgb, var(--landing-red) 17%, var(--landing-canvas)), var(--landing-canvas) 62%); }.landing-closing { max-width: 40rem; margin-inline: auto; text-align: center; }.landing-closing .landing-kicker, .landing-closing .landing-actions { justify-content: center; }.landing-closing h2 { font-size: clamp(2.5rem, 5vw, 4rem); }.landing-closing .landing-actions { margin-top: 2rem; }
+.landing-footer { border-top: 1px solid var(--landing-hairline); padding-block: 2rem; background: var(--landing-canvas); }.landing-footer > div { display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center; }.landing-footer p { color: var(--landing-ink-subtle); font-size: 0.75rem; }.landing-footer nav { display: flex; gap: 1.25rem; }
