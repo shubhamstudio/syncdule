@@ -5,7 +5,7 @@ import "./(routes)/(landing)/navbar.css";
 import "./(routes)/(landing)/responsive.css";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import {
   ChannelsSection,
   ClosingSection,
@@ -17,7 +17,7 @@ import { Hero } from "@/components/landing/hero";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { SiteHeader } from "@/components/landing/site-header";
 
-export default function LandingPage() {
+function LandingPageContent() {
   const { isLoaded, isSignedIn } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -45,5 +45,13 @@ export default function LandingPage() {
       </main>
       <SiteFooter />
     </div>
+  );
+}
+
+export default function LandingPage() {
+  return (
+    <Suspense fallback={null}>
+      <LandingPageContent />
+    </Suspense>
   );
 }
