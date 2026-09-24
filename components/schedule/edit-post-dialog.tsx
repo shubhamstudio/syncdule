@@ -268,7 +268,6 @@ export function EditPostDialog({
                     </div>
 
                 </div>
-                </div>
 
                 <DialogFooter className="m-0! shrink-0 px-4 pb-4 pt-4 sm:px-8">
                     <div className="w-full flex items-center justify-between gap-2">
