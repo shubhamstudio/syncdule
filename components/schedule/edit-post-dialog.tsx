@@ -159,12 +159,11 @@ export function EditPostDialog({
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className={cn(
-              "max-h-[92svh] w-[calc(100%-1rem)] gap-0 overflow-y-auto px-0 pt-0 pb-0! sm:w-full lg:overflow-hidden",
+              "flex h-[min(92svh,720px)] w-[calc(100%-1rem)] flex-col gap-0 overflow-hidden p-0 sm:w-full",
                 selectedRightTab && "lg:max-w-[950px]"
             )}>
-                <div>
-                    <DialogHeader className="border-b border-white/10 px-4 py-4 sm:px-8">
-                        <div className="flex items-center justify-between">
+                <DialogHeader className="shrink-0 border-b border-white/10 px-4 py-4 sm:px-8">
+                        <div className="flex min-w-0 items-center justify-between gap-2">
                             <DialogTitle className="text-lg font-semibold">Edit Post</DialogTitle>
                             <div className="flex items-center gap-px">
                                 {rightTabs.map((tab) => (
@@ -180,11 +179,12 @@ export function EditPostDialog({
                                 ))}
                             </div>
                         </div>
-                    </DialogHeader>
-                    <DialogDescription />
+                </DialogHeader>
+                <DialogDescription className="sr-only">Edit the content, media, and scheduled time for this post.</DialogDescription>
 
                     {/* ── Main panel ── */}
-                    <div className="flex min-h-[550px] w-full flex-1 flex-col lg:max-h-[570px] lg:flex-row">
+                    <div className="min-h-0 w-full flex-1 overflow-y-auto">
+                    <div className="flex min-h-full w-full flex-col lg:flex-row">
 
                         {/* Left panel */}
                         <div className="flex min-w-0 flex-1 flex-col pb-5 lg:w-[300px]">
@@ -268,8 +268,9 @@ export function EditPostDialog({
                     </div>
 
                 </div>
+                </div>
 
-                <DialogFooter className="m-0! px-4 pb-4 pt-4 sm:px-8">
+                <DialogFooter className="m-0! shrink-0 px-4 pb-4 pt-4 sm:px-8">
                     <div className="w-full flex items-center justify-between gap-2">
                         <Button
                             variant="ghost"
