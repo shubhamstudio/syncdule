@@ -38,7 +38,7 @@ const PreviewPanel = ({
     switch (channel.type) {
         case ChannelTypeEnum.LINKEDIN:
           return <LinkedinPreview
-            text={previewText}
+            text={content.text}
             images={imageUrls}
             profileImage={channel?.profile_image || ""}
         handle={channel?.handle || ""}

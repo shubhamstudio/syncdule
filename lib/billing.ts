@@ -1,7 +1,7 @@
 import "server-only";
 
 import { auth } from "@clerk/nextjs/server";
-import { getInsforgeAdminClient } from "@/lib/insforge-server";
+import { getInsforgeAdminClient, getInsforgeServerClient } from "@/lib/insforge-server";
 import { getPlan, type PlanId } from "@/lib/plans";
 
 export type BillingStatus = {
@@ -74,10 +74,10 @@ export async function consumeAiQuota(feature: "ideas" | "post-copy" | "viral-sug
   if (!billing.userId || !billing.plan) return { allowed: false, billing };
   if (billing.source === "clerk") return { allowed: true, billing };
 
-  // getBillingStatus authenticated the caller with Clerk and returned the
-  // scoped user ID above. The quota RPC uses that authenticated database
-  // function, so it must not depend on an optional Clerk JWT template.
-  const insforge = getInsforgeAdminClient();
+  // consume_ai_quota resolves the caller through the database auth context.
+  // Use the Clerk-backed client so the RPC records usage for the signed-in user.
+  const { insforge, userId } = await getInsforgeServerClient();
+  if (!userId || userId !== billing.userId) return { allowed: false, billing };
   const { data, error } = await insforge.database.rpc("consume_ai_quota", { p_feature: feature });
   const row = Array.isArray(data) ? data[0] : data;
   if (error || !row?.allowed) return { allowed: false, billing };
