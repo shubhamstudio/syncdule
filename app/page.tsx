@@ -5,7 +5,7 @@ import "./(routes)/(landing)/navbar.css";
 import "./(routes)/(landing)/responsive.css";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import {
   ChannelsSection,
   ClosingSection,
@@ -17,7 +17,7 @@ import { Hero } from "@/components/landing/hero";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { SiteHeader } from "@/components/landing/site-header";
 
-export default function LandingPage() {
+function LandingAuthRedirect() {
   const { isLoaded, isSignedIn } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -32,8 +32,16 @@ export default function LandingPage() {
     router.replace(isSignedIn ? "/calendar" : `/${authMode}`);
   }, [authMode, isLoaded, isSignedIn, router]);
 
+  return null;
+}
+
+export default function LandingPage() {
+  const { isSignedIn } = useAuth();
   return (
     <div className="landing-neo">
+      <Suspense fallback={null}>
+        <LandingAuthRedirect />
+      </Suspense>
       <SiteHeader isSignedIn={isSignedIn} />
       <main>
         <Hero isSignedIn={isSignedIn} />

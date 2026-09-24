@@ -30,6 +30,6 @@ export const config = {
     // Always run for API routes
     '/(api|trpc)(.*)',
     // Always run for Clerk-specific frontend API routes
-    '/__clerk/(.*)',
+    '/__clerk/:path*',
   ],
 }

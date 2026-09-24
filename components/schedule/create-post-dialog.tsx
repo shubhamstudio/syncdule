@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useMemo, useState } from "react";
 import { format, parse, set } from "date-fns"
-import { getChannelIcon } from "@/constants/channels";
+import { ChannelTypeEnum, getChannelIcon } from "@/constants/channels";
 import { ChannelType } from "@/types/channel.type";
 import { ImageObject, VideoObject } from "@/types/post.type";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -41,6 +41,11 @@ type ChannelContent = {
     text: string
     images: ImageObject[]
     video: VideoObject | null
+}
+
+function supportsSeparateTitleAndDescription(channel: ChannelType) {
+    // LinkedIn posts accept commentary and media, not separate title/description fields.
+    return channel.type !== ChannelTypeEnum.LINKEDIN;
 }
 
 type ActionTabType = "ideas" | "ai" | "preview"
@@ -285,10 +290,11 @@ const CreatePostDialog = ({ open, onOpenChange, selectedDate }: PropsType) => {
         }
         const postToCreate = selectedChannelsList.map((channel) => {
             const content = channelContent[channel.id] ?? { title: "", description: "", text: "", images: [], video: null }
+            const supportsMetadata = supportsSeparateTitleAndDescription(channel)
             return {
                 channelTypeId: channel.id,
-                title: content.title,
-                description: content.description,
+                title: supportsMetadata ? content.title : "",
+                description: supportsMetadata ? content.description : "",
                 content: content.text,
                 images: content.images, video: content.video
             }
@@ -489,6 +495,7 @@ const CreatePostDialog = ({ open, onOpenChange, selectedDate }: PropsType) => {
                                             const content = channelContent[channel.id] || { title: "", description: "", text: "", images: [], video: null };
                                             const isExpanded = activeAccordion === channel.id;
                                             const icon = getChannelIcon(channel.type);
+                                            const supportsMetadata = supportsSeparateTitleAndDescription(channel);
                                             return (
                                                 <AccordionItem
                                                     key={channel.id}
@@ -546,7 +553,7 @@ dark:text-amber-400">
                                                                     </div>
                                                                 )}
 
-                                                                <div className="mb-4 grid gap-3">
+                                                                {supportsMetadata && <div className="mb-4 grid gap-3">
                                                                     <div className="grid gap-1.5">
                                                                         <label className="text-xs font-medium" htmlFor={`post-title-${channel.id}`}>
                                                                             Post title {channel.type === "YOUTUBE" && <span className="text-muted-foreground">(required)</span>}
@@ -578,7 +585,7 @@ dark:text-amber-400">
                                                                             disabled={!channel.connected}
                                                                         />
                                                                     </div>
-                                                                </div>
+                                                                </div>}
 
                                                                 <ContentTextarea
                                                                     value={content?.text || ""}
