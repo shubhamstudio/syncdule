@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getBillingStatus } from "@/lib/billing";
-import { getInsforgeServerClient } from "@/lib/insforge-server";
+import { getAuthenticatedInsforgeAdminClient } from "@/lib/server/insforge-admin";
 
 export async function GET() {
   try {
@@ -9,7 +9,8 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { insforge } = await getInsforgeServerClient();
+    const { insforge, userId } = await getAuthenticatedInsforgeAdminClient();
+    if (!insforge || userId !== status.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { data: orders, error } = await insforge.database
       .from("billing_orders")
       .select("id, plan, amount, currency, status, created_at")

@@ -25,6 +25,7 @@ SYNCDULE is owned by Shubham Bisht. The product name, original work, and project
 3. Configure the Clerk JWT template named `insforge` and add the application callback URL to each social provider.
 4. Create or select the InsForge storage bucket named by `INSFORGE_STORAGE_BUCKET`.
 5. Run the application with `npm run dev`.
+6. In a second terminal, run `npm run inngest:dev` while developing scheduled publishing locally. Keep `INNGEST_DEV=1` only in `.env.local`; deployed environments must omit it and register `{NEXT_PUBLIC_APP_URL}/api/inngest` with Inngest Cloud.
 
 The social OAuth callback is:
 

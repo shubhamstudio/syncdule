@@ -1,6 +1,7 @@
 import { POST_STATUS } from "@/constants/post";
 import { getAuthenticatedInsforgeAdminClient } from "@/lib/server/insforge-admin";
 import { NextRequest, NextResponse } from "next/server";
+import { inngest } from "@/inngest/client";
 
 
 
@@ -46,6 +47,17 @@ export async function PATCH(request:NextRequest,
             return NextResponse.json({ error: "Failed to update post" }, { status: 500 });
         }
         
+        if (postStatus === POST_STATUS.QUEUE && data?.id) {
+            try {
+                await inngest.send({
+                    name: "post/publish.requested",
+                    data: { postId: data.id },
+                });
+            } catch (dispatchError) {
+                console.error("Unable to dispatch rescheduled post", dispatchError);
+            }
+        }
+
         return NextResponse.json({ post:data});
     } catch (error) {
         console.error("Error updating post:", error);

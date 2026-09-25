@@ -3,6 +3,7 @@ import { getAuthenticatedInsforgeAdminClient } from "@/lib/server/insforge-admin
 import { NextRequest, NextResponse } from "next/server";
 import { hasAiAccess } from "@/lib/billing";
 import type { InsForgeClient } from "@insforge/sdk";
+import { inngest } from "@/inngest/client";
 
 
 export async function GET(request: NextRequest) {
@@ -196,6 +197,20 @@ export async function POST(request: NextRequest) {
             if(error) {
                 console.log(error,"error")
                 return NextResponse.json({ error: "Failed to create posts" }, { status: 500 })
+            }
+
+            if (postStatus === POST_STATUS.QUEUE) {
+                try {
+                    await inngest.send((data ?? []).map((post) => ({
+                        name: "post/publish.requested",
+                        data: { postId: post.id },
+                    })));
+                } catch (dispatchError) {
+                    // The post is durable in the queue and the cron fallback
+                    // will retry it. Do not lose a scheduled post because the
+                    // background service is briefly unavailable.
+                    console.error("Unable to dispatch scheduled posts", dispatchError);
+                }
             }
 
             return NextResponse.json({ posts: data }, { status: 201 })

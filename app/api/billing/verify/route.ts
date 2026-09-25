@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBillingStatus } from "@/lib/billing";
-import { getInsforgeServerClient } from "@/lib/insforge-server";
+import { getAuthenticatedInsforgeAdminClient } from "@/lib/server/insforge-admin";
 
 const RAZORPAY_ENVIRONMENT = process.env.RAZORPAY_ENVIRONMENT === "live" ? "live" : "test";
 
@@ -10,7 +10,8 @@ export async function POST(request: NextRequest) {
     if (!billing.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { subscriptionId, paymentId, signature } = await request.json();
     if (![subscriptionId, paymentId, signature].every((value) => typeof value === "string" && value.trim())) return NextResponse.json({ error: "Invalid payment verification payload" }, { status: 400 });
-    const { insforge } = await getInsforgeServerClient();
+    const { insforge, userId } = await getAuthenticatedInsforgeAdminClient();
+    if (!insforge || userId !== billing.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { data: internalOrder, error: orderError } = await insforge.database.from("billing_orders").select("id").eq("user_id", billing.userId).eq("provider_subscription_id", subscriptionId).single();
     if (orderError || !internalOrder) return NextResponse.json({ error: "Subscription record not found" }, { status: 404 });
     const { data, error } = await insforge.payments.razorpay.verifySubscription(RAZORPAY_ENVIRONMENT, { subscriptionId, paymentId, signature });

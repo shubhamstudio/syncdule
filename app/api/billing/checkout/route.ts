@@ -1,7 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { getBillingStatus } from "@/lib/billing";
-import { getInsforgeServerClient } from "@/lib/insforge-server";
+import { getAuthenticatedInsforgeAdminClient } from "@/lib/server/insforge-admin";
 import { getPlan, isPlanId } from "@/lib/plans";
 
 const RAZORPAY_ENVIRONMENT = process.env.RAZORPAY_ENVIRONMENT === "live" ? "live" : "test";
@@ -21,7 +21,10 @@ export async function POST(request: NextRequest) {
     if (!providerPlanId) return NextResponse.json({ error: "This plan is not ready for checkout yet. Please try again shortly." }, { status: 503 });
 
     const plan = getPlan(body.plan)!;
-    const { insforge } = await getInsforgeServerClient();
+    // Clerk already authenticated this route. Billing rows are scoped by that
+    // user ID, so this must not depend on a separate optional JWT template.
+    const { insforge, userId } = await getAuthenticatedInsforgeAdminClient();
+    if (!insforge || userId !== billing.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { data: internalOrder, error: orderError } = await insforge.database.from("billing_orders").insert([{
       user_id: billing.userId, plan: body.plan, amount: plan.price * 100, currency: "INR", status: "pending", billing_interval: "month",
     }]).select("id").single();

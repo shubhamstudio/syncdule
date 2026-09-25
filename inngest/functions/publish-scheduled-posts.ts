@@ -18,7 +18,7 @@ export const publishScheduledPostsCron = inngest.createFunction(
         name:"Publish Scheduled Posts",
         triggers:[
             {
-                cron:"*/10 * * * *"
+                cron:"* * * * *"
             }
         ]
     },
@@ -80,7 +80,7 @@ export const publishScheduledPost = inngest.createFunction(
             .eq("status", "queue")
             .single()
 
-        logger.info("Load post", { data })
+        logger.info("Load scheduled post", { postId: data?.id, scheduledAt: data?.scheduled_at, status: data?.status, hasChannel: Boolean(data?.user_channels) })
         if(error){
             logger.error(error)
             throw error
@@ -92,6 +92,28 @@ export const publishScheduledPost = inngest.createFunction(
        if(!post){
         logger.error("Post not found", { postId: event.data.postId })
         return { skipped: true, reason: "post_not_found" }
+       }
+
+       const scheduledAt = new Date(post.scheduled_at);
+       if (!Number.isNaN(scheduledAt.getTime()) && scheduledAt.getTime() > Date.now()) {
+            await step.sleepUntil("wait-until-scheduled-time", scheduledAt);
+       }
+
+       const latestState = await step.run("confirm-post-is-still-due", async () => {
+            const insforge = getInsforgeAdminClient()
+            const { data, error } = await insforge.database
+                .from("scheduled_posts")
+                .select("status, scheduled_at")
+                .eq("id", post.id)
+                .single()
+            if (error) throw error
+            return data
+       })
+       if (!latestState || latestState.status !== "queue") {
+            return { skipped: true, reason: "post_is_no_longer_queued" }
+       }
+       if (new Date(latestState.scheduled_at).getTime() > Date.now()) {
+            return { skipped: true, reason: "post_was_rescheduled" }
        }
 
        const userChannel = post.user_channels
@@ -112,7 +134,7 @@ export const publishScheduledPost = inngest.createFunction(
             tokenExpiresAt <= Date.now()
 
         if(!providerType || !accessToken){
-            logger.error("Missing provider type or access token", { providerType, accessToken })
+            logger.error("Missing provider type or access token", { providerType, hasAccessToken: Boolean(accessToken) })
             return { skipped: true, reason: "missing_provider_or_token" }
         }
 
@@ -136,34 +158,43 @@ export const publishScheduledPost = inngest.createFunction(
         }
     
 
-         let publishedUrl: string | null = null
-
-         try {
-            publishedUrl = await step.run("publish-to-ptrovider", async () => {
-                if(providerType === ChannelTypeEnum.LINKEDIN){
-                    return publishToLinkedIn({
+         const publishResult = await step.run("publish-to-provider", async () => {
+            try {
+                const publishedUrl = providerType === ChannelTypeEnum.LINKEDIN
+                    ? await publishToLinkedIn({
                         accessToken: currentAccessToken,
-                        text:post.content,
+                        text: post.content,
                         authorId: post.user_channels?.provider_account_id,
                         images: post.images,
-                        logger
-                    });
-                }  
-                
-                throw new Error(`Unsupported provider type: ${providerType}`)
-            })
+                        logger,
+                    })
+                    : providerType === ChannelTypeEnum.INSTAGRAM
+                        ? await publishToInstagram({
+                            accessToken: currentAccessToken,
+                            caption: post.content,
+                            instagramAccountId: post.user_channels?.provider_account_id,
+                            images: post.images,
+                        })
+                        : (() => { throw new Error(`Publishing is not available for ${providerType} yet.`) })();
 
-            await step.run("mark-post-published", async () => {
-                await markPostPublished(post.id, publishedUrl);
-            })
+                return { publishedUrl };
+            } catch (error) {
+                const message = error instanceof Error ? error.message : "Unknown error";
+                logger.error("Failed to publish post", { postId: post.id, providerType, message });
+                await markPostFailed(post.id, message);
+                return { error: message };
+            }
+         })
 
-             return { published: true, provider: providerType }
-         } catch (error) {
-            logger.error("Failed to publish post", { error })
-            const message = error instanceof Error ? error.message : "Unknown error"
-            await markPostFailed(post.id, message)
-            throw error
+         if ("error" in publishResult) {
+            return { published: false, provider: providerType, error: publishResult.error };
          }
+
+         await step.run("mark-post-published", async () => {
+            await markPostPublished(post.id, publishResult.publishedUrl);
+         })
+
+         return { published: true, provider: providerType }
     }
 )
 
@@ -290,6 +321,76 @@ async function uploadImagesToTwitter({
 
 
 
+async function publishToInstagram({
+  accessToken,
+  caption,
+  instagramAccountId,
+  images,
+}: {
+  accessToken: string
+  caption: string
+  instagramAccountId?: string | null
+  images?: ImageObject[]
+}) {
+  if (!instagramAccountId) throw new Error("Missing Instagram account id.")
+  const imageUrl = images?.[0]?.url
+  if (!imageUrl) {
+    throw new Error("Instagram publishing currently requires one image.")
+  }
+
+  const createResponse = await fetch(`https://graph.instagram.com/v24.0/${instagramAccountId}/media`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      image_url: imageUrl,
+      caption: caption.slice(0, 2200),
+    }),
+  })
+  const createData = await readProviderResponse(createResponse)
+  if (!createResponse.ok || !createData?.id) {
+    throw new Error(readProviderError(createData, "Failed to create Instagram media."))
+  }
+
+  const publishResponse = await fetch(`https://graph.instagram.com/v24.0/${instagramAccountId}/media_publish`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({ creation_id: String(createData.id) }),
+  })
+  const publishData = await readProviderResponse(publishResponse)
+  if (!publishResponse.ok || !publishData?.id) {
+    throw new Error(readProviderError(publishData, "Failed to publish to Instagram."))
+  }
+
+  const mediaResponse = await fetch(`https://graph.instagram.com/v24.0/${publishData.id}?fields=permalink`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
+  const mediaData = await readProviderResponse(mediaResponse)
+  return typeof mediaData?.permalink === "string" ? mediaData.permalink : null
+}
+
+async function readProviderResponse(response: Response): Promise<Record<string, unknown> | null> {
+  const text = await response.text()
+  if (!text) return null
+  try {
+    return JSON.parse(text) as Record<string, unknown>
+  } catch {
+    return null
+  }
+}
+
+function readProviderError(data: Record<string, unknown> | null, fallback: string) {
+  const error = data?.error
+  if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
+    return error.message
+  }
+  return fallback
+}
 async function publishToLinkedIn({
   accessToken,
   text,
