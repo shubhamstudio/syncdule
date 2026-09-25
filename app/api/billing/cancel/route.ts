@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getBillingStatus } from "@/lib/billing";
-import { getAuthenticatedInsforgeAdminClient } from "@/lib/server/insforge-admin";
+import { getInsforgeServerClient } from "@/lib/insforge-server";
 
 const RAZORPAY_ENVIRONMENT = process.env.RAZORPAY_ENVIRONMENT === "live" ? "live" : "test";
 
@@ -13,8 +13,9 @@ export async function POST() {
       return NextResponse.json({ error: "There is no active monthly plan to manage." }, { status: 400 });
     }
 
-    const { insforge, userId } = await getAuthenticatedInsforgeAdminClient();
-    if (!insforge || userId !== billing.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { insforge, userId } = await getInsforgeServerClient();
+    if (userId !== billing.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const { error } = await insforge.payments.razorpay.cancelSubscription(
       RAZORPAY_ENVIRONMENT,
       billing.providerSubscriptionId,
