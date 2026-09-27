@@ -33,6 +33,7 @@ type PropsType = {
     open: boolean
     onOpenChange: (open: boolean) => void
     selectedDate?: Date | null
+    initialContent?: string
 }
 
 type ChannelContent = {
@@ -57,7 +58,7 @@ const rightTabs = [
 ]
 
 
-const CreatePostDialog = ({ open, onOpenChange, selectedDate }: PropsType) => {
+const CreatePostDialog = ({ open, onOpenChange, selectedDate, initialContent }: PropsType) => {
 
     const queryClient = useQueryClient();
     const [globalContent, setGlobalContent] = useState<ChannelContent>({ title: "", description: "", text: "", images: [], video: null })
@@ -101,6 +102,12 @@ const CreatePostDialog = ({ open, onOpenChange, selectedDate }: PropsType) => {
         setDate(selectedDate)
        }
     }, [selectedDate])
+
+    useEffect(() => {
+        if (open && initialContent) {
+            setGlobalContent(prev => ({ ...prev, text: initialContent }))
+        }
+    }, [open, initialContent])
 
    
     useEffect(() => {

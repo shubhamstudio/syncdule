@@ -69,7 +69,7 @@ export async function getBillingStatus(): Promise<BillingStatus> {
 }
 
 /** Consume one generation immediately before calling the model. */
-export async function consumeAiQuota(feature: "ideas" | "post-copy" | "viral-suggestor") {
+export async function consumeAiQuota(feature: "ideas" | "post-copy" | "viral-suggestor" | "trending-finder") {
   const billing = await getBillingStatus();
   if (!billing.userId || !billing.plan) return { allowed: false, billing };
   if (billing.source === "clerk") return { allowed: true, billing };
