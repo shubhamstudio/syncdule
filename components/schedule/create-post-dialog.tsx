@@ -728,12 +728,12 @@ dark:text-amber-400">
                                     setDate={setDate}
                                     time={timeSlot}
                                     setTime={setTimeSlot}
-                                    renderButton={(isDatePassed, isTimeNotAvailable) => <Button
+                                    renderButton={(isDatePassed, isTimeNotAvailable, isPostNow) => <Button
                                         size="lg"
                                         className="border py-4.5 px-4"
-                                        disabled={createPostMutation.isPending || !date || !timeSlot || isDatePassed || isTimeNotAvailable}
+                                        disabled={createPostMutation.isPending || (!isPostNow && (!date || !timeSlot || isDatePassed || isTimeNotAvailable))}
                                         onClick={() => {
-                                            if (isDatePassed || isTimeNotAvailable) {
+                                            if (!isPostNow && (isDatePassed || isTimeNotAvailable)) {
                                                 toast.error("Please select a valid date and time")
                                                 return;
                                             }
@@ -741,7 +741,7 @@ dark:text-amber-400">
                                         }}
                                     >
                                         {createPostMutation.isPending && createPostMutation.variables.status === undefined && <Spinner />}
-                                        Schedule Post
+                                        {isPostNow ? "Post Now" : "Schedule Post"}
                                     </Button>}
 
                                 />

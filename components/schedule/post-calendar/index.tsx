@@ -152,10 +152,10 @@ export function PostCalendar({
         events={events}
         date={currentDate}
         formats={formats}
-        step={isWeekView ? 15 : 60}
-        timeslots={10}
-        min={new Date(2026, 0, 1, 0, 0)}
-        max={new Date(2026, 0, 1, 22, 0)}
+        step={60}
+        timeslots={2}
+        min={new Date(new Date().getFullYear(), 0, 1, 0, 0)}
+        max={new Date(new Date().getFullYear(), 0, 1, 23, 30)}
         onNavigate={onDateChange}
         view={view === "month" ? Views.MONTH : Views.WEEK}
         onView={(v) => onViewChange(v === Views.MONTH ? "month" : "week")}

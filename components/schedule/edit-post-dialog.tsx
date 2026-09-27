@@ -283,20 +283,20 @@ export function EditPostDialog({
                         <ButtonGroup className="p-0!">
                             <ScheduleDatePicker
                                 date={date} setDate={setDate} time={time} setTime={setTime}
-                                renderButton={(isDatePassed, isTimeNotAvailable) => <Button
+                                renderButton={(isDatePassed, isTimeNotAvailable, isPostNow) => <Button
                                     size="lg"
                                     className="border py-4.5 px-4"
                                     onClick={() => {
-                                        if (isDatePassed || isTimeNotAvailable) {
+                                        if (!isPostNow && (isDatePassed || isTimeNotAvailable)) {
                                             toast.error("Please select a valid time")
                                             return;
                                         }
                                         handleUpdate()
                                     }}
-                                    disabled={updatePostMutation.isPending || !date || !time || isTimeNotAvailable || isDatePassed}
+                                    disabled={updatePostMutation.isPending || (!isPostNow && (!date || !time || isTimeNotAvailable || isDatePassed))}
                                 >
                                     {updatePostMutation.isPending && updatePostMutation.variables?.status === undefined && <Spinner />}
-                                    Schedule Post
+                                    {isPostNow ? "Post Now" : "Schedule Post"}
                                 </Button>}
                             />
                         </ButtonGroup>
