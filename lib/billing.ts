@@ -78,7 +78,10 @@ export async function consumeAiQuota(feature: "ideas" | "post-copy" | "viral-sug
   // Use the Clerk-backed client so the RPC records usage for the signed-in user.
   const { insforge, userId } = await getInsforgeServerClient();
   if (!userId || userId !== billing.userId) return { allowed: false, billing };
-  const { data, error } = await insforge.database.rpc("consume_ai_quota", { p_feature: feature });
+  
+  // Map trending-finder to viral-suggestor for the database quota check
+  const dbFeature = feature === "trending-finder" ? "viral-suggestor" : feature;
+  const { data, error } = await insforge.database.rpc("consume_ai_quota", { p_feature: dbFeature });
   const row = Array.isArray(data) ? data[0] : data;
   if (error || !row?.allowed) return { allowed: false, billing };
   return { allowed: true, billing: { ...billing, quota: { used: row.used, limit: row.quota, remaining: Math.max(0, row.quota - row.used), renewsAt: row.renews_at } } };

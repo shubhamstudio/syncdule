@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const raw = await generateGroqText({
       systemPrompt: [
         "You are an ethical social-media strategist.",
-        "Return only valid JSON with keys hooks (array of 3 strings), outline (array of 4 strings), hashtags (array of 8 strings), rationale (string).",
+        "Return only valid JSON with keys title (string), description (string - caption/summary), hooks (array of 3 strings), outline (array of 4 strings), hashtags (array of 8 strings), rationale (string).",
         "Do not promise virality, fabricate trends, or use markdown.",
       ].join(" "),
       userPrompt:

@@ -18,7 +18,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import CreatePostDialog from "@/components/schedule/create-post-dialog";
 
-type Suggestion = { hooks: string[]; outline: string[]; hashtags: string[]; rationale: string };
+type Suggestion = { title: string; description: string; hooks: string[]; outline: string[]; hashtags: string[]; rationale: string };
 
 type TrendItem = {
   topic: string;
@@ -309,6 +309,14 @@ export function ViralSuggestor() {
             </div>
           ) : (
             <div className="space-y-6">
+              {/* Title & Description */}
+              {(suggestion.title || suggestion.description) && (
+                <section className="space-y-2 rounded-md border border-white/5 bg-white/[0.015] p-4">
+                  {suggestion.title && <h3 className="text-base font-semibold">{suggestion.title}</h3>}
+                  {suggestion.description && <p className="text-sm text-muted-foreground">{suggestion.description}</p>}
+                </section>
+              )}
+
               {/* Hooks */}
               <section>
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">Hooks to test</p>
@@ -327,8 +335,8 @@ export function ViralSuggestor() {
                             title="Save this hook as an idea"
                             disabled={saveIdeaMutation.isPending || savedHooks.has(index)}
                             onClick={() => saveIdeaMutation.mutate({
-                              title: hook,
-                              description: suggestion.outline.join("\n"),
+                              title: suggestion.title || hook,
+                              description: `${hook}\n\n${suggestion.description || ""}\n\n${suggestion.outline.join("\n")}`,
                               hookIndex: index,
                             })}
                           >
@@ -342,7 +350,7 @@ export function ViralSuggestor() {
                             className="size-7"
                             title="Create a post from this hook"
                             onClick={() => handlePostThis(
-                              `${hook}\n\n${suggestion.outline.join("\n")}\n\n${suggestion.hashtags.join(" ")}`
+                              `${hook}\n\n${suggestion.description ? suggestion.description + "\n\n" : ""}${suggestion.outline.join("\n")}\n\n${suggestion.hashtags.join(" ")}`
                             )}
                           >
                             <SendHorizonal className="size-3.5" />
@@ -388,8 +396,8 @@ export function ViralSuggestor() {
                   className="gap-2"
                   disabled={saveIdeaMutation.isPending}
                   onClick={() => saveIdeaMutation.mutate({
-                    title: suggestion.hooks[0] || "Viral content idea",
-                    description: suggestion.outline.join("\n") + "\n\n" + suggestion.hashtags.join(" "),
+                    title: suggestion.title || suggestion.hooks[0] || "Viral content idea",
+                    description: `${suggestion.description ? suggestion.description + "\n\n" : ""}${suggestion.outline.join("\n")}\n\n${suggestion.hashtags.join(" ")}`,
                   })}
                 >
                   <BookmarkPlus className="size-4" />
@@ -399,7 +407,7 @@ export function ViralSuggestor() {
                   size="sm"
                   className="gap-2"
                   onClick={() => handlePostThis(
-                    `${suggestion.hooks[0]}\n\n${suggestion.outline.join("\n")}\n\n${suggestion.hashtags.join(" ")}`
+                    `${suggestion.hooks[0]}\n\n${suggestion.description ? suggestion.description + "\n\n" : ""}${suggestion.outline.join("\n")}\n\n${suggestion.hashtags.join(" ")}`
                   )}
                 >
                   <SendHorizonal className="size-4" />
