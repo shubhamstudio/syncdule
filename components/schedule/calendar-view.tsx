@@ -89,9 +89,9 @@ const CalendarView = () => {
   }
 
   return (
-    <div className="flex flex-col overflow-hidden bg-transparent">
+    <div className="flex flex-col bg-transparent">
       <div className="min-h-0 flex-1">
-        <div className="h-full min-w-0 overflow-x-auto p-4 pt-3 sm:p-6 sm:pt-4">
+        <div className="min-w-0 overflow-x-auto p-4 pt-3 sm:p-6 sm:pt-4">
           <PostCalendar
             posts={posts}
             isPending={isPending}

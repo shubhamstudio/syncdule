@@ -56,6 +56,10 @@
 .rbc-time-content > * + * > * {
   border-color: var(--color-border) !important;
 }
+
+.rbc-time-content {
+  overflow-y: auto !important;
+}
 .rbc-off-range-bg { background: rgba(255, 255, 255, 0.012) !important; }
 .rbc-today { background: rgba(255, 138, 0, 0.035) !important; }
 

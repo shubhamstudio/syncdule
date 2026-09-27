@@ -146,7 +146,7 @@ export function PostCalendar({
   }
 
   return (
-    <div className={cn("relative flex h-full min-h-[520px] min-w-[680px] flex-col bg-transparent md:min-w-0")}>
+    <div className={cn("relative flex min-h-[700px] min-w-[680px] flex-col bg-transparent md:min-w-0")}>
       <DragAndDropCalendar
         localizer={localizer}
         events={events}
