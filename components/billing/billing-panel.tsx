@@ -88,6 +88,7 @@ function formatDate(value: string | null) {
 export default function BillingPanel() {
   const client = useQueryClient();
   const [verifying, setVerifying] = useState(false);
+  const [checkoutPlan, setCheckoutPlan] = useState<PlanId | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [manageOpen, setManageOpen] = useState(false);
 
@@ -285,9 +286,12 @@ export default function BillingPanel() {
                   className="w-full"
                   variant={current ? "outline" : "default"}
                   disabled={current || checkout.isPending || verifying || !billing?.billingConfigured}
-                  onClick={() => checkout.mutate(id)}
+                  onClick={() => {
+                    setCheckoutPlan(id);
+                    checkout.mutate(id);
+                  }}
                 >
-                  {checkout.isPending || verifying ? <Spinner /> : <CreditCard className="size-4" />}
+                  {((checkout.isPending || verifying) && checkoutPlan === id) ? <Spinner /> : <CreditCard className="size-4" />}
                   {current ? "Current plan" : isDowngrade ? "Switch to this plan" : "Choose plan"}
                 </Button>
               </CardFooter>

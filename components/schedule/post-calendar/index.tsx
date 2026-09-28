@@ -146,10 +146,13 @@ export function PostCalendar({
   }
 
   return (
-    <div className={cn("relative flex min-h-[700px] min-w-[680px] flex-col bg-transparent md:min-w-0")}>
+    <div className={cn("relative flex h-[700px] min-w-[680px] flex-col bg-transparent md:min-w-0")}>
       <DragAndDropCalendar
         localizer={localizer}
         events={events}
+        // react-big-calendar uses a percentage height internally. A concrete parent
+        // height prevents the time grid from collapsing after a full page refresh.
+        style={{ height: "100%" }}
         date={currentDate}
         formats={formats}
         step={60}
@@ -161,6 +164,7 @@ export function PostCalendar({
         onView={(v) => onViewChange(v === Views.MONTH ? "month" : "week")}
         onSelectEvent={(event: any) => onPostClick(event)}
         onEventDrop={({ event, start }) => onReschedule(event as PostType, start as Date)}
+        eventPropGetter={() => ({ className: "rbc-post-event" })}
         selectable={Boolean(onDateClick)}
         onSelectSlot={({ start, action }) => {
           if (action === "click") onDateClick?.(start as Date)

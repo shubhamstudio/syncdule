@@ -42,7 +42,7 @@ const CalendarView = () => {
       if (channelIds.length > 0) {
         params.append("channelIds", channelIds.join(","))
       }
-      const res = await fetch(`/api/post?${params.toString()}`);
+      const res = await fetch(`/api/post?${params.toString()}`, { cache: "no-store" });
       if (!res.ok) throw new Error(await getApiErrorMessage(res, "Unable to load scheduled posts"));
       return res.json();
     },

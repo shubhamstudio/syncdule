@@ -80,6 +80,18 @@
   box-shadow: none;
 }
 
+/* The custom event renderer owns the card padding and background. Keeping the
+   library wrapper flush prevents one-hour posts from being clipped or layered
+   over their own event box. */
+.rbc-post-event {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.rbc-post-event .rbc-event-content {
+  height: 100%;
+}
+
 .rbc-time-slot-disabled {
   opacity: 0.7;
   cursor: not-allowed;
