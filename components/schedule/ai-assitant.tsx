@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { ArrowUpRight, Repeat, Minus, Plus, Wand2Icon, Zap } from "lucide-react"
+import { ArrowUpRight, BotMessageSquare, Repeat, Minus, Plus, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Textarea } from "@/components/ui/textarea"
@@ -98,7 +98,7 @@ export function AIAssistant({ className, content, channelId, structured = false,
   return (
     <div
       className={cn(
-        "flex flex-col h-full rounded-lg border border-border bg-background p-4",
+        "flex flex-col h-full rounded-lg border border-primary/20 bg-card p-4",
         className
       )}
     >
@@ -118,13 +118,12 @@ export function AIAssistant({ className, content, channelId, structured = false,
           </div>
       )}
       
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2 ">
-          <Wand2Icon className="h-4 w-4 text-purple-500" />
-          <span className="text-sm font-semibold bg-linear-to-r from-purple-500
-           to-blue-500 bg-clip-text text-transparent">
-            AI Assistant
+      <div className="mb-4 flex items-center justify-between border-b border-primary/15 pb-3">
+        <div className="flex items-center gap-2">
+          <span className="grid size-7 place-items-center rounded-md bg-primary/15 text-primary">
+            <BotMessageSquare className="size-4" />
           </span>
+          <span className="text-sm font-semibold text-foreground">AI Assistant</span>
         </div>
       </div>
 
@@ -146,13 +145,12 @@ export function AIAssistant({ className, content, channelId, structured = false,
           size="lg"
           onClick={handleGenerate}
           disabled={!prompt.trim() || generateMutation.isPending || !canUseAI}
-          className="w-full gap-2 bg-linear-to-r
-           from-purple-500 from-50%  to-blue-500 text-white"
+          className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
         >
           {generateMutation.isPending && generateMutation.variables?.action === "generate" ? (
             <Spinner />
           ) : (
-            <Wand2Icon className="h-4 w-4" />
+            <BotMessageSquare className="h-4 w-4" />
           )}
           Generate
         </Button>
@@ -171,9 +169,9 @@ export function AIAssistant({ className, content, channelId, structured = false,
                 disabled={generateMutation.isPending || !canUseAI}
               >
                 {generateMutation.isPending && generateMutation.variables?.action === label.toLowerCase() ? (
-                  <Spinner className="h-4 w-4 text-purple-500" />
+                  <Spinner className="h-4 w-4 text-primary" />
                 ) : (
-                  <Icon className="h-4 w-4 text-purple-500" />
+                  <Icon className="h-4 w-4 text-primary" />
                 )}
                 {label}
               </Button>

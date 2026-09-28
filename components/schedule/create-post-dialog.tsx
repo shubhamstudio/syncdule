@@ -7,7 +7,7 @@ import { ImageObject, VideoObject } from "@/types/post.type";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { cn } from "@/lib/utils";
-import { AlertTriangle, Lightbulb, ScanEye, Wand2 } from "lucide-react";
+import { AlertTriangle, BotMessageSquare, Lightbulb, ScanEye } from "lucide-react";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
@@ -53,7 +53,7 @@ type ActionTabType = "ideas" | "ai" | "preview"
 
 const rightTabs = [
     { id: "ideas" as ActionTabType, label: "Ideas", icon: Lightbulb },
-    { id: "ai" as ActionTabType, label: "AI Assistant", icon: Wand2 },
+    { id: "ai" as ActionTabType, label: "AI Assistant", icon: BotMessageSquare },
     { id: "preview" as ActionTabType, label: "Preview", icon: ScanEye },
 ]
 
@@ -380,10 +380,10 @@ const CreatePostDialog = ({ open, onOpenChange, selectedDate, initialContent }: 
                     </DialogHeader>
 
 
-                    <div className="post-dialog-scrollbar flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto xl:flex-row xl:overflow-hidden">
+                    <div className="post-dialog-scrollbar flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:overflow-hidden">
 
                         {/* Left — channel list */}
-                        <div className="flex min-h-0 min-w-0 flex-1 flex-col pb-5 xl:w-[300px]">
+                        <div className="flex min-h-0 min-w-0 flex-1 flex-col pb-5 max-lg:flex-none">
                             <div className="channel--selector px-4 py-5 sm:px-8">
                                 {channels?.length > 0 && !isPending && (
                                     <button
@@ -659,11 +659,11 @@ dark:text-amber-400">
 
                         {/* Right — channel preview */}
                         {selectedRightTab && (
-                            <div className="post-dialog-scrollbar flex h-[360px] min-h-0 w-full shrink-0 flex-col overflow-y-auto border-t border-border bg-muted/30 xl:h-auto xl:w-[350px] xl:border-t-0 xl:border-l
+                            <div className="post-dialog-scrollbar flex h-[360px] min-h-0 w-full shrink-0 flex-col overflow-y-auto border-t border-border bg-muted/30 lg:h-auto lg:w-auto lg:border-t-0 lg:border-l
             ">
                                 <div className="flex min-h-0 flex-1 flex-col py-4">
                                     {selectedRightTab === "ai" && (
-                                        <div className="px-6">
+                                        <div className="min-h-0 px-6">
                                             <AIAssistant 
                             content={channelContent[activeAccordion]?.text || 
                                 globalContent?.text || ""
